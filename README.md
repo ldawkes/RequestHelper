@@ -21,6 +21,13 @@ Provides Laravel-like request validation without all the overhead.
     $result = RequestHelper::validatePost($rules, $aliases);
 ```
 
+## Available Methods
+
+| Method           | Purpose
+| ---              | ---
+| **validateGet**  | Validates GET parameters
+| **validatePost** | Validates POST parameters
+
 ## Available Rules
 
 | Name                             | Behaviour                                                | Example
