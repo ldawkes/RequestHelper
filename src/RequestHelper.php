@@ -40,94 +40,94 @@ class RequestHelper
      */
     private static function validateArray($array, $rules = array(), $customMessages = array())
     {
-        if (empty($rules)) {
-            return true;
-        }
-
-        $errors = array();
-
-        foreach ($rules as $inputName => $ruleset) {
-            $ruleset = explode("|", $ruleset);
-            $currentErrors = array();
-
-            if (in_array("null", $ruleset) && (isset($array[$inputName]) && !empty($array[$inputName]))) {
-                array_push($currentErrors, "must be null");
-            } else {
-                if (in_array("required", $ruleset) && !isset($array[$inputName])) {
-                    array_push($currentErrors, "is required");
-                }
-                
-                if ($entries = preg_grep("/(required_without)/", $ruleset)) {
-                    $entry   = current(array_filter($entries));
-                    $without = substr($entry, strrpos($entry, ":") + 1);
-                    
-                    if (empty($array[$without]) && empty($array[$inputName])) {
-                        $without = self::userFriendlyInputName($without);
-                        
-                        array_push($currentErrors, "is required when $without is not provided");
-                    }
-                }
-
-                if (isset($array[$inputName])) {
-                    $input = $array[$inputName];
-
-                    if (in_array("string", $ruleset) && !is_string($input)) {
-                        array_push($currentErrors, "must be letters and/or numbers");
-                    }
-
-                    if (in_array("numeric", $ruleset) && !is_numeric($input)) {
-                        array_push($currentErrors, "must be numeric");
-                    }
-
-                    if (in_array("email", $ruleset) && !filter_var($input, FILTER_VALIDATE_EMAIL)) {
-                        array_push($currentErrors, "must be a valid email");
-                    }
-
-                    if (in_array("decimal", $ruleset) && (!is_float($input) && !is_numeric($input))) {
-                        array_push($currentErrors, "must be a valid number/decimal number");
-                    }
-
-                    if (in_array("phone", $ruleset)) {
-                        $input = preg_replace("/[^0-9]+/", "", trim($input));
-
-                        if (!is_numeric($input)) {
-                            array_push($currentErrors, "must be a valid phone number");
-                        }
-                    }
-
-                    if (in_array("array", $ruleset) && !is_array($input)) {
-                        array_push($currentErrors, "must be a valid array of choices");
-                    }
-
-                    if ($entries = preg_grep("/(same_as)/", $ruleset)) {
-                        $entry        = current(array_filter($entries));
-                        $matchAgainst = substr($entry, strpos($entry, ":") + 1, strlen($entry));
-
-                        if (!isset($array[$matchAgainst]) || $input != $array[$matchAgainst]) {
-                            $matchAgainst = self::userFriendlyInputName($matchAgainst);
-
-                            array_push($currentErrors, "must be the same as $matchAgainst");
-                        }
-                    }
-                }
-            }
-
-            if (!empty($currentErrors)) {
-                if (!empty($customMessages) && array_key_exists($inputName, $customMessages)) {
-                    $friendlyInput = $customMessages[$inputName];
+        if (empty($array) || empty($rules)) {
+            $errors = true;
+        } else {
+            $errors = array();
+            
+            foreach ($rules as $inputName => $ruleset) {
+                $ruleset = explode("|", $ruleset);
+                $currentErrors = array();
+    
+                if (in_array("null", $ruleset) && (isset($array[$inputName]) && !empty($array[$inputName]))) {
+                    array_push($currentErrors, "must be null");
                 } else {
-                    $friendlyInput = self::userFriendlyInputName($inputName);
+                    if (in_array("required", $ruleset) && !isset($array[$inputName])) {
+                        array_push($currentErrors, "is required");
+                    }
+                    
+                    if ($entries = preg_grep("/(required_without)/", $ruleset)) {
+                        $entry   = current(array_filter($entries));
+                        $without = substr($entry, strrpos($entry, ":") + 1);
+                        
+                        if (empty($array[$without]) && empty($array[$inputName])) {
+                            $without = self::userFriendlyInputName($without);
+                            
+                            array_push($currentErrors, "is required when $without is not provided");
+                        }
+                    }
+    
+                    if (isset($array[$inputName])) {
+                        $input = $array[$inputName];
+    
+                        if (in_array("string", $ruleset) && !is_string($input)) {
+                            array_push($currentErrors, "must be letters and/or numbers");
+                        }
+    
+                        if (in_array("numeric", $ruleset) && !is_numeric($input)) {
+                            array_push($currentErrors, "must be numeric");
+                        }
+    
+                        if (in_array("email", $ruleset) && !filter_var($input, FILTER_VALIDATE_EMAIL)) {
+                            array_push($currentErrors, "must be a valid email");
+                        }
+    
+                        if (in_array("decimal", $ruleset) && (!is_float($input) && !is_numeric($input))) {
+                            array_push($currentErrors, "must be a valid number/decimal number");
+                        }
+    
+                        if (in_array("phone", $ruleset)) {
+                            $input = preg_replace("/[^0-9]+/", "", trim($input));
+    
+                            if (!is_numeric($input)) {
+                                array_push($currentErrors, "must be a valid phone number");
+                            }
+                        }
+    
+                        if (in_array("array", $ruleset) && !is_array($input)) {
+                            array_push($currentErrors, "must be a valid array of choices");
+                        }
+    
+                        if ($entries = preg_grep("/(same_as)/", $ruleset)) {
+                            $entry        = current(array_filter($entries));
+                            $matchAgainst = substr($entry, strpos($entry, ":") + 1, strlen($entry));
+    
+                            if (!isset($array[$matchAgainst]) || $input != $array[$matchAgainst]) {
+                                $matchAgainst = self::userFriendlyInputName($matchAgainst);
+    
+                                array_push($currentErrors, "must be the same as $matchAgainst");
+                            }
+                        }
+                    }
                 }
-
-                $errors[$inputName] = array(
-                    "friendlyName"  => $friendlyInput,
-                    "errors"        => $currentErrors
-                );
+    
+                if (!empty($currentErrors)) {
+                    if (!empty($customMessages) && array_key_exists($inputName, $customMessages)) {
+                        $friendlyInput = $customMessages[$inputName];
+                    } else {
+                        $friendlyInput = self::userFriendlyInputName($inputName);
+                    }
+    
+                    $errors[$inputName] = array(
+                        "friendlyName"  => $friendlyInput,
+                        "errors"        => $currentErrors
+                    );
+                }
             }
-        }
-
-        if (empty($errors)) {
-            return true;
+    
+            if (empty($errors)) {
+                $errors = true;
+            }
         }
 
         return $errors;
