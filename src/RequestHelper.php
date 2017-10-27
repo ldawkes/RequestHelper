@@ -38,9 +38,9 @@ class RequestHelper
      * 
      * @return boolean|array    Returns true if validation passed, returns array of errors (input => errors[]) if validation failed
      */
-    private static function validateArray($array, $rules = array(), $customMessages = array())
+    private static function validateArray($array = array(), $rules = array(), $customMessages = array())
     {
-        if (empty($array) || empty($rules)) {
+        if (empty($rules)) {
             $errors = true;
         } else {
             $errors = array();
