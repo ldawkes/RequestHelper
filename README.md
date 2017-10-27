@@ -36,6 +36,7 @@ Provides Laravel-like request validation without all the overhead.
 | **required_without**:*parameter* | *Parameter is only required when another is missing*     | ```"age" => "required_without:consent"```
 | **null**                         | *Checks that parameter is null*                          | ```"human_check_hidden" => "null"```
 | **string**                       | *Checks parameter only contains alphanumeric characters* | ```"message" => "string"```
+| **bool**                         | *Checks parameter is a valid boolean value*              | ```"terms" => "bool"```
 | **email**                        | *Checks parameter is a valid email*                      | ```"email" => "required\|email"```
 | **decimal**                      | *Checks parameter is a valid decimal number*             | ```"result" => "decimal"```
 | **phone**                        | *Checks parameter is a valid phone number*               | ```"phone_no" => "phone"```
