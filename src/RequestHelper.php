@@ -73,6 +73,10 @@ class RequestHelper
                         if (in_array("string", $ruleset) && !is_string($input)) {
                             array_push($currentErrors, "must be letters and/or numbers");
                         }
+
+                        if (in_array("bool", $ruleset) && !is_bool($input)) {
+                            array_push($currentErrors, "must represent true/false");
+                        }
     
                         if (in_array("numeric", $ruleset) && !is_numeric($input)) {
                             array_push($currentErrors, "must be numeric");
